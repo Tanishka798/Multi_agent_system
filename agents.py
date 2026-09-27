@@ -9,8 +9,10 @@ output of craete agent
     AIMessage(content="Title: Climate Change: What You Need to Know\nURL: http....]
     (we need last ai message so we will use [-1] while printing the output)
 '''
+import os
+
 from langchain.agents import create_agent
-from langchain_mistralai import ChatMistralAI
+from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from tools import web_search, scrape_url
@@ -18,25 +20,28 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-llm = ChatMistralAI(
-    model = "mistral-large-latest",
-    temperature = 0
-    )
+ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
+llm = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen2.5-coder:3b"),
+    base_url=ollama_base_url,
+    temperature=0,
+)
+
+tool_llm = ChatOllama(
+    model=os.getenv("OLLAMA_TOOL_MODEL", "qwen2.5:3b"),
+    base_url=ollama_base_url,
+    temperature=0,
+)
 
 #1st agent
 
 def build_search_agent():
-    return create_agent(
-        model = llm ,
-        tools = [web_search]
-    )
+    return create_agent(model=tool_llm, tools=[web_search])
 
 #2nd agent
 def build_reader_agent():
-    return create_agent(
-        model = llm,
-        tools=[scrape_url]
-    )
+    return create_agent(model=tool_llm, tools=[scrape_url])
 
 #writer chain
 

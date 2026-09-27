@@ -87,7 +87,7 @@ The Streamlit interface presents the report, evaluation, raw search results, and
 | Streamlit         | Interactive user interface                                |
 | LangChain         | Agent creation and LLM chains                             |
 | LangChain Agents  | Tool-enabled search and reader agents                     |
-| Mistral AI        | Language model for agents, report writing, and evaluation |
+| Ollama            | Runs local language models for agents, report writing, and evaluation |
 | Tavily Search API | Web search                                                |
 | Requests          | Fetch webpage content                                     |
 | BeautifulSoup     | HTML parsing and text extraction                          |
@@ -113,8 +113,8 @@ Multi_Agent_System/
 ### Prerequisites
 
 * Python 3.10 or a compatible version
-* A Mistral AI API key
 * A Tavily API key
+* Ollama with `qwen2.5-coder:3b` and `qwen2.5:3b` available locally
 * Git
 
 ### 1. Clone the repository
@@ -144,14 +144,15 @@ pip install -r requirements.txt
 
 ### 4. Configure environment variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root with your Tavily key:
 
 ```env
 TAVILY_API_KEY=your_tavily_api_key
-MISTRAL_API_KEY=your_mistral_api_key
 ```
 
-Replace the placeholders with your actual API keys. Never commit the `.env` file to GitHub.
+The report writer and critic use `qwen2.5-coder:3b`. The search and reader agents use `qwen2.5:3b` for native tool calling. Both run locally through Ollama. To use different installed models or an Ollama server on another address, set `OLLAMA_MODEL`, `OLLAMA_TOOL_MODEL`, or `OLLAMA_BASE_URL` in `.env`.
+
+The language models run locally; web search still uses Tavily and requires an internet connection and API key. Never commit the `.env` file to GitHub.
 
 ### 5. Run the application
 
